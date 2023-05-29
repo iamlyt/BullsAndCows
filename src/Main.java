@@ -4,22 +4,16 @@ import java.util.Random;
 
 public class Main {
     protected static int bullCount;
-
     protected static int cowCount;
+    protected static List<Integer> secretCode = generateCode();
+
     public static void main(String[] args) {
-
-
-        // save generated numbers in list
-        List<Integer> secretCode = generateCode();
-
-
         // game log
-        System.out.println("The secret code is prepared: ****.\n");
         int turn = 0;
-
         bullCount = 0;
         cowCount = 0;
 
+        System.out.println("The secret code is prepared: ****.\n");
         while (true) {
             turn++;
             System.out.println("Turn " + turn + ". Answer: ");
@@ -27,10 +21,10 @@ public class Main {
             // generate a different code each loop
             List<Integer> code = generateCode();
             // print that generated code
-            print(code);
+            System.out.println(print(code));
 
 
-            // compare the two lists --
+            // compare the two lists -- check if elements bull or cow
             for (int i = 0; i < code.size(); i++) {
                 if (code.get(i).equals(secretCode.get(i))) {
                     bullCount++;
@@ -39,113 +33,74 @@ public class Main {
                 if (secretCode.contains(code.get(i)) && !(code.get(i).equals(secretCode.get(i)))) {
                     cowCount++;
                 }
-
             }
-            checkCount(bullCount, cowCount, secretCode);
+            // check grade with passed bullCount and cowCount
+            checkGrade(bullCount, cowCount);
             if (bullCount == 4) {
                 break;
             }
             bullCount = 0;
             cowCount = 0;
-
-//            // if there's no bulls or cows
-//            if (bullCount == 0 && cowCount == 0) {
-//                System.out.println("\nNone.\n");
-//            }
-//
-//            // if there's more than 0 bull and 0 cow
-//            if (bullCount > 0 && cowCount > 0) {
-//                if (bullCount == 1 && cowCount == 1) {
-//                    System.out.println("\nGrade: " + bullCount + " bull and " + cowCount + " cow.\n");
-//                } else if (bullCount > 1 && cowCount == 1) {
-//                    System.out.println("\nGrade: " + bullCount + " bulls and " + cowCount + " cow.\n");
-//                } else {
-//                    System.out.println("\nGrade: " + bullCount + " bull and " + cowCount + " cows.\n");
-//                }
-//            }
-//
-//            // if there's only bull
-//            if (bullCount > 0 && cowCount == 0) {
-//                // if more than 1 bull
-//                System.out.println(bullCount == 1 ? "\nGrade: " + bullCount +
-//                        " bull.\n" : "\nGrade: " + bullCount + " " + bulls +
-//                        "\n");
-//                // if 4 bulls in total - win game --> end game
-//                if (bullCount == 4) {
-//                    System.out.println("\nGrade: " + bullCount + bulls +
-//                            "\nCongrats! The secret code is " + secretCode.toString() + "\n");
-//                    break;
-//                }
-//            }
-//
-//            // if only cow
-//            if (bullCount == 0 && cowCount > 0) {
-//                if (cowCount > 1) {
-//                    System.out.println("\nGrade: " + cowCount + " " + cows +
-//                            "\n");
-//                } else {
-//                    System.out.println("\nGrade: " + cowCount + " cow.\n");
-//                }
-//            }
-            System.out.println("The secret code is " + secretCode + "\n");
         }
     }
-    public static void checkCount(int bullCount, int cowCount,
-                                  List<Integer> secretCode) {
+
+    // check grade and print it
+    public static void checkGrade(int bullCount, int cowCount) {
 
         String bulls = "bulls.";
         String cows = "cows.";
-        String text = "\nGrade: ";
-
-
 
         // if there's NO bulls or cows
         if (bullCount == 0 && cowCount == 0) {
             System.out.println("\nNone.\n");
         }
 
-        // if there's more than 0 bull and 0 cow
         if (bullCount > 0 && cowCount > 0) {
             if (bullCount == 1 && cowCount == 1) {
-
-                System.out.println("\nGrade: " + bullCount + " bull and " + cowCount + " cow.\n");
+                System.out.println("Grade: " + bullCount + " bull and " + cowCount + " cow.\n");
             } else if (bullCount > 1 && cowCount == 1) {
-                System.out.println("\nGrade: " + bullCount + " bulls and " + cowCount + " cow.\n");
+                System.out.println("Grade: " + bullCount + " bulls and " + cowCount + " cow.\n");
             } else {
-                System.out.println("\nGrade: " + bullCount + " bull and " + cowCount + " cows.\n");
+                System.out.println("Grade: " + bullCount + " bull and " + cowCount + " cows.\n");
             }
         }
 
         // if only bull
         if (bullCount > 0 && cowCount == 0) {
             // if more than 1 bull
-            System.out.println(bullCount == 1 ? "\nGrade: " + bullCount +
-                    " bull.\n" : "\nGrade: " + bullCount + " " + bulls +
-                    "\n");
+            if (bullCount == 1) {
+                System.out.println("Grade: " + bullCount + " bull.\n" );
+            } else if (bullCount < 4) {
+                System.out.println("\nGrade: " + bullCount + " " + bulls +
+                        "\n");
+            }
             // if 4 bulls in total - win game --> end game
             if (bullCount == 4) {
-                System.out.println("\nGrade: " + bullCount + " " + bulls +
-                        "\nCongrats! The secret code is " + secretCode.toString() + "\n");
+                System.out.println("Grade: " + bullCount + " " + bulls +
+                        "\nCongrats! The secret code is " + print(secretCode) +
+                        "\n");
             }
         }
 
         // if only cow
         if (bullCount == 0 && cowCount > 0) {
             if (cowCount > 1) {
-                System.out.println("\nGrade: " + cowCount + " " + cows +
+                System.out.println("Grade: " + cowCount + " " + cows +
                         "\n");
             } else {
-                System.out.println("\nGrade: " + cowCount + " cow.\n");
+                System.out.println("Grade: " + cowCount + " cow.\n");
             }
         }
 
     }
 
     // print elements in list
-    public static void print(List<Integer> list) {
+    public static String print(List<Integer> list) {
+        StringBuilder num = new StringBuilder();
         for (int i : list) {
-            System.out.print(i);
+            num.append(i);
         }
+        return num.toString();
     }
 
     // generate unique 4-digit code and return the list
@@ -161,9 +116,6 @@ public class Main {
                 list.add(rand);
             }
         }
-
         return list;
-
-//    }
     }
 }
