@@ -2,21 +2,52 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class BullsCows {
-    protected int bullCount;
-    protected int cowCount;
+    private int bullCount = 0;
+    private int cowCount = 0;
 
-    public BullsCows() {
-        this.bullCount = 0;
-        this.cowCount = 0;
+    protected BullsCows() {
+        start();
     }
-    public void start() {
+
+    // method to start game
+    private void start() {
+        handleInput();
+    }
+
+    // method for handling input
+    private void handleInput() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input the length of the secret code:");
-        int length = Integer.parseInt(scanner.nextLine());
-        System.out.println("Input the number of possible symbols in the code:");
-        int numberOfSymbols = Integer.parseInt(scanner.nextLine());
-        prepared(length, numberOfSymbols);
+        String length = scanner.nextLine();
 
+        int lengthInt;
+        int numberOfSymbols;
+        if (!(length.matches("\\d+"))) {
+            System.out.println("Error: \"" + length + "\" isn't a valid " +
+                    "number.");
+        } else {
+            lengthInt = Integer.parseInt(length);
+            System.out.println("Input the number of possible symbols in the code:");
+            numberOfSymbols = Integer.parseInt(scanner.nextLine());
+            // handle input
+            if (lengthInt > numberOfSymbols) {
+                System.out.println("Error: it's not possible to generate a code " +
+                        "with a length of " + length + " with " + numberOfSymbols + " unique " +
+                        "symbols.");
+            } else if (numberOfSymbols > 36) {
+                System.out.println("Error: maximum number of possible symbols in the code is 36 (0-9, a-z).");
+            } else if (lengthInt < 1) {
+                System.out.println("Error: enter length between 0 and 36");
+            } else {
+                prepared(lengthInt, numberOfSymbols);
+                setUpGame(lengthInt, numberOfSymbols);
+            }
+        }
+    }
+
+    // method for setting up game
+    private void setUpGame(int length, int numberOfSymbols) {
+        Scanner scanner = new Scanner(System.in);
         // generate secret code and split it into array
         String secret = generateCode(length, numberOfSymbols);
         String[] secretCode = secret.split("");
@@ -48,8 +79,9 @@ public class BullsCows {
             cowCount = 0;
         }
     }
+
     // check grade and print it
-    public void checkGrade(int bullCount, int cowCount) {
+    private void checkGrade(int bullCount, int cowCount) {
 
         if (bullCount > 0 && cowCount > 0) {
             if (bullCount > 1 && cowCount > 1) {
@@ -71,8 +103,8 @@ public class BullsCows {
 
     }
 
-    // generate unique 4-digit code and return the list
-    public String generateCode(int length, int numberOfSymbols) {
+    // generate unique secret code
+    private String generateCode(int length, int numberOfSymbols) {
         Random rnd = new Random();
         StringBuilder str = new StringBuilder();
 
@@ -118,26 +150,32 @@ public class BullsCows {
         return str.toString();
     }
 
-    public static void prepared(int length, int numberOfSymbols) {
+    // generate prepared secret code using * & print characters used to
+    // generate code
+    private static void prepared(int length, int numberOfSymbols) {
         String stars = stars(length);
         String startGame = "\nOkay, let's start a game!\n";
 
-        if (numberOfSymbols == 11) {
-            System.out.printf("The secret is prepared: %s " + "(0-9, a)" +
-                    "%s", stars, startGame);
-        } else if (numberOfSymbols > 11) {
-            System.out.printf("The secret is prepared: %s " + "(0-9, " + "a" +
-                    "-%c)" + "%s" ,stars, characters(numberOfSymbols), startGame);
-        } else if (numberOfSymbols == 10) {
-            System.out.printf("The secret is prepared: %s " + "(0-9)" + "%s",
-                    stars, startGame);
-        } else {
-            System.out.printf("The secret is prepared: %s " + "(0-" + (numberOfSymbols) +
-                    ")" + "%s", stars, startGame);
+        if (length <= 36 && numberOfSymbols <= 36) {
+            if (numberOfSymbols == 11) {
+                System.out.printf("The secret is prepared: %s " + "(0-9, a)" +
+                        "%s", stars, startGame);
+            } else if (numberOfSymbols > 11) {
+                System.out.printf("The secret is prepared: %s " + "(0-9, " + "a" +
+                        "-%c)" + "%s", stars, characters(numberOfSymbols), startGame);
+            } else if (numberOfSymbols == 10) {
+                System.out.printf("The secret is prepared: %s " + "(0-9)" + "%s",
+                        stars, startGame);
+            } else {
+                System.out.printf("The secret is prepared: %s " + "(0-" + (numberOfSymbols) +
+                        ")" + "%s", stars, startGame);
+            }
         }
+
     }
 
-    public static String stars(int length) {
+    // method for prepared -- generate number of stars
+    private static String stars(int length) {
         StringBuilder star = new StringBuilder("*");
         int i = 1;
         while (i < length) {
@@ -147,7 +185,9 @@ public class BullsCows {
         return star.toString();
     }
 
-    public static char characters(int numberOfSymbols) {
+    // generate characters for prepared
+    private static char characters(int numberOfSymbols) {
         return (char) ('a' + numberOfSymbols - 11);
     }
 }
+
